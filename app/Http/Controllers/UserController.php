@@ -4,12 +4,13 @@ namespace App\Http\Controllers;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Http\Requests\LoginUserRequest;
 //use App\Http\Controllers\AuthController;
 use Illuminate\Support\Facades\Auth;
 class UserController extends Controller
 {
     public function register(Request $request){
-        $request->validate([
+       $request->validate([
             'username'=>'required|string|max:255',
             'phone'=>'required|string|min:10',
             'password'=>'required|string|min:8|confirmed'
@@ -28,11 +29,11 @@ class UserController extends Controller
     public function login(Request $request){
         $request->validate([
             'phone'=>'required|string|min:10',
-            'password'=>'required|string|min:8|confirmed'
+            'password'=>'required|string|min:8'
         ]);
 
             if(!Auth::attempt($request->only('phone','password')))
-                return response()->json([
+            return response()->json([
                 'message'=>'invalid phone'],401);
        $user= User::where('phone',$request->phone)->FirstOrFail();
        $token= $user->createToken('auth_Token')->plainTextToken;
